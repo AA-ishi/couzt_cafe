@@ -1,19 +1,45 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>コーツトカフェガチャ</title>
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
       padding: 2em;
+      margin: 0;
       background: #fefefe;
     }
     h1 {
-      font-size: 1.5em;
-      margin-bottom: 1em;
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+    .subtext {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 2em;
+    }
+    #gachaIcon {
+      width: 30vw;
+      max-width: 120px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #gachaIcon:hover {
+      transform: scale(1.1);
+    }
+    #result {
+      margin-top: 2em;
+      font-size: 1em;
+      font-weight: bold;
+      line-height: 1.5;
+      white-space: pre-line;
+      padding: 0 1em;
+    }
+  </style>
+</head>
     }
     #result {
       margin-top: 2em;
