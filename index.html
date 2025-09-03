@@ -57,35 +57,35 @@
     let data = [];
 
     // CSVファイルを自動読み込み
-    fetch('./menu.csv')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('CSVファイルの読み込みに失敗しました');
-        }
-        return response.text();
-      })
-      .then(text => {
-        const lines = text.trim().split('\n').slice(1); // ヘッダー除去
-        data = lines.map(line => {
-          const [menu, comment] = line.trim().split(',');
-          return { menu, comment };
-        }).filter(item => item.menu && item.comment);
-        console.log('CSV読み込み成功:', data);
-      })
-      .catch(error => {
-        console.error('CSV読み込みエラー:', error);
-        document.getElementById('result').innerText = '⚠️ メニューの読み込みに失敗しました';
-      });
-
-    // ガチャを回す処理
-    function pickRandom() {
-      if (data.length === 0) {
-        document.getElementById('result').innerText = '⚠️ メニューが読み込まれていません';
-        return;
-      }
-      const item = data[Math.floor(Math.random() * data.length)];
-      document.getElementById('result').innerText = `「${item.menu}」\n${item.comment}`;
+   fetch('./menu.csv')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('CSVファイルの読み込みに失敗しました');
     }
+    return response.text();
+  })
+  .then(text => {
+    const lines = text.trim().split('\n').slice(1); // ヘッダー除去
+    data = lines.map(line => {
+      const [menu, comment, mood] = line.trim().split(',');
+      return { menu, comment, mood };
+    }).filter(item => item.menu && item.comment && item.mood);
+    console.log('CSV読み込み成功:', data);
+  })
+  .catch(error => {
+    console.error('CSV読み込みエラー:', error);
+    document.getElementById('result').innerText = '⚠️ メニューの読み込みに失敗しました';
+  });
+
+// ガチャを回す処理
+function pickRandom() {
+  if (data.length === 0) {
+    document.getElementById('result').innerText = '⚠️ メニューが読み込まれていません';
+    return;
+  }
+  const item = data[Math.floor(Math.random() * data.length)];
+  document.getElementById('result').innerText = `「${item.menu}」\n${item.comment}\n🌟 ムード: ${item.mood}`;
+} 
   </script>
 </body>
 </html>
