@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>コーツトカフェガチャ</title>
+  <title>コートカフェガチャ</title>
   <style>
     body {
       font-family: sans-serif;
@@ -11,51 +11,33 @@
       background: #fefefe;
     }
     h1 {
-      font-size: 1.6em;
-      margin-bottom: 0.5em;
-    }
-    .guide {
-      font-size: 1em;
-      color: #555;
-      margin-bottom: 1.5em;
-    }
-    #gachaIcon {
-      width: 140px;
-      cursor: pointer;
-      transition: transform 0.2s;
-      background: none;
-    }
-    #gachaIcon:hover {
-      transform: scale(1.1);
+      font-size: 1.5em;
+      margin-bottom: 1em;
     }
     #result {
       margin-top: 2em;
       font-size: 1.2em;
-      font-weight: bold;
-      line-height: 1.6;
       white-space: pre-line;
-      word-wrap: break-word;
+      font-weight: bold;
+      line-height: 1.5;
     }
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.4em;
-      }
-      #gachaIcon {
-        width: 120px;
-      }
-      #result {
-        font-size: 1.1em;
-      }
+    #gachaIcon {
+      width: 120px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #gachaIcon:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
-
-  <h1>コーツトカフェガチャ</h1>
-  <p class="guide">アイコンをクリックしてね ☕</p>
+  <h1>🎲 コーツトカフェガチャ</h1>
 
   <!-- ガチャアイコン -->
-  <img src="./icon_clear.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
+  <div>
+    <img src="./icon_gacha.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
+  </div>
 
   <!-- 結果表示 -->
   <div id="result"></div>
@@ -63,18 +45,20 @@
   <script>
     let data = [];
 
-    // CSVファイルを読み込み（menu, comment, mood）
+    // CSVファイルを自動読み込み
     fetch('./menu.csv')
       .then(response => {
-        if (!response.ok) throw new Error('CSVファイルの読み込みに失敗しました');
+        if (!response.ok) {
+          throw new Error('CSVファイルの読み込みに失敗しました');
+        }
         return response.text();
       })
       .then(text => {
         const lines = text.trim().split('\n').slice(1); // ヘッダー除去
         data = lines.map(line => {
-          const [menu, comment, mood] = line.trim().split(',');
-          return { menu, comment, mood };
-        }).filter(item => item.menu && item.comment && item.mood);
+          const [menu, comment] = line.trim().split(',');
+          return { menu, comment };
+        }).filter(item => item.menu && item.comment);
         console.log('CSV読み込み成功:', data);
       })
       .catch(error => {
@@ -89,10 +73,8 @@
         return;
       }
       const item = data[Math.floor(Math.random() * data.length)];
-      document.getElementById('result').innerText =
-        `🎉「${item.menu}」\n${item.comment}\n気分：${item.mood}`;
+      document.getElementById('result').innerText = `🎉「${item.menu}」\n${item.comment}`;
     }
   </script>
-
 </body>
 </html>
