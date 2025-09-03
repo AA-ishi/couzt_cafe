@@ -89,8 +89,9 @@ function pickRandom() {
   // ドアベルの音を再生
   const sound = document.getElementById('doorSound');
   sound.currentTime = 0; // 毎回最初から再生
-  sound.play();
-
+  sound.play().catch(error => {
+  console.error('音声再生エラー:', error);
+});
   const item = data[Math.floor(Math.random() * data.length)];
   document.getElementById('result').innerText = `「${item.menu}」\n${item.comment}\n ${item.mood}`;
 } 
