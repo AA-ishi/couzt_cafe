@@ -2,93 +2,96 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>コーツトカフェガチャ</title>
   <style>
     body {
       font-family: sans-serif;
-      padding: 1em;
-      font-size: clamp(1rem, 2.5vw, 1.4rem);
-      background-color: #f9f9f9;
-      color: #333;
+      text-align: center;
+      padding: 2em;
+      background: #fefefe;
     }
-
-    h2 {
-      font-size: clamp(1.5rem, 4vw, 2.5rem);
+    h1 {
+      font-size: 1.6em;
       margin-bottom: 0.5em;
     }
-
     .guide {
-      font-size: 1rem;
+      font-size: 1em;
       color: #555;
-      margin-bottom: 1em;
+      margin-bottom: 1.5em;
     }
-
     #gachaIcon {
-      width: 160px;
-      max-width: 80%;
+      width: 140px;
       cursor: pointer;
+      transition: transform 0.2s;
       background: none;
-      border: none;
-      display: block;
-      margin: 0 auto 1em;
     }
-
-    .result {
-      background-color: #fff;
-      border-radius: 8px;
-      padding: 1em;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    #gachaIcon:hover {
+      transform: scale(1.1);
+    }
+    #result {
+      margin-top: 2em;
+      font-size: 1.2em;
+      font-weight: bold;
+      line-height: 1.6;
+      white-space: pre-line;
       word-wrap: break-word;
-      white-space: normal;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5em;
     }
-
-    .result p {
-      margin: 0;
-    }
-
     @media (max-width: 600px) {
-      h2 {
-        font-size: 1.4rem;
-      }
-      .guide {
-        font-size: 0.9rem;
+      h1 {
+        font-size: 1.4em;
       }
       #gachaIcon {
-        width: 140px;
+        width: 120px;
+      }
+      #result {
+        font-size: 1.1em;
       }
     }
   </style>
 </head>
 <body>
 
-  <h2>コーツトカフェガチャ</h2>
+  <h1>コーツトカフェガチャ</h1>
   <p class="guide">アイコンをクリックしてね ☕</p>
-  <img src="icon_clear.png" alt="ガチャアイコン" id="gachaIcon">
 
-  <div class="result" id="resultBox">
-    <p>メニュー：<span id="menu">---</span></p>
-    <p>コメント：<span id="comment">---</span></p>
-    <p>気分：<span id="mood">---</span></p>
-  </div>
+  <!-- ガチャアイコン -->
+  <img src="./icon_clear.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
+
+  <!-- 結果表示 -->
+  <div id="result"></div>
 
   <script>
-    const data = [
-      { menu: "カフェラテ", comment: "ほっとしたいときにおすすめ", mood: "リラックス" },
-      { menu: "エスプレッソ", comment: "集中したいときにぴったり", mood: "シャキッと" },
-      { menu: "抹茶ラテ", comment: "和風気分でまったり", mood: "ほっこり" },
-      { menu: "キャラメルマキアート", comment: "甘いものが欲しいときに", mood: "ご褒美" }
-    ];
+    let data = [];
 
-    document.getElementById("gachaIcon").addEventListener("click", () => {
-      const result = data[Math.floor(Math.random() * data.length)];
-      document.getElementById("menu").textContent = result.menu;
-      document.getElementById("comment").textContent = result.comment;
-      document.getElementById("mood").textContent = result.mood;
-    });
+    // CSVファイルを読み込み（menu, comment, mood）
+    fetch('./menu.csv')
+      .then(response => {
+        if (!response.ok) throw new Error('CSVファイルの読み込みに失敗しました');
+        return response.text();
+      })
+      .then(text => {
+        const lines = text.trim().split('\n').slice(1); // ヘッダー除去
+        data = lines.map(line => {
+          const [menu, comment, mood] = line.trim().split(',');
+          return { menu, comment, mood };
+        }).filter(item => item.menu && item.comment && item.mood);
+        console.log('CSV読み込み成功:', data);
+      })
+      .catch(error => {
+        console.error('CSV読み込みエラー:', error);
+        document.getElementById('result').innerText = '⚠️ メニューの読み込みに失敗しました';
+      });
+
+    // ガチャを回す処理
+    function pickRandom() {
+      if (data.length === 0) {
+        document.getElementById('result').innerText = '⚠️ メニューが読み込まれていません';
+        return;
+      }
+      const item = data[Math.floor(Math.random() * data.length)];
+      document.getElementById('result').innerText =
+        `🎉「${item.menu}」\n${item.comment}\n気分：${item.mood}`;
+    }
   </script>
 
 </body>
