@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>おすすめメニューガチャ</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; background: #fefefe; }
+    h1 { font-size: 1.5em; margin-bottom: 1em; }
+    #result { margin-top: 2em; font-size: 1.2em; white-space: pre-line; }
+    #gachaIcon { width: 120px; cursor: pointer; transition: transform 0.2s; }
+    #gachaIcon:hover { transform: scale(1.1); }
+    input[type="file"] { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>🎲 今日のおすすめメニューガチャ</h1>
+
+  <!-- CSVファイル読み込み -->
+  <input type="file" id="csvFile" accept=".csv">
+
+  <!-- ガチャアイコン -->
+  <div>
+    <img src="gacha-icon.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
+  </div>
+
+  <!-- 結果表示 -->
+  <div id="result"></div>
+
+  <script>
+    let data = [];
+
+    // CSV読み込み処理
+    document.getElementById('csvFile').addEventListener('change', function(e) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        const lines = reader.result.split('\n').slice(1); // ヘッダー除去
+        data = lines.map(line => {
+          const [menu, comment] = line.trim().split(',');
+          return { menu, comment };
+        }).filter(item => item.menu && item.comment);
+      };
+      reader.readAsText(e.target.files[0]);
+    });
+
+    // ガチャを回す処理
+    function pickRandom() {
+      if (data.length === 0) {
+        document.getElementById('result').innerText = 'CSVファイルを読み込んでください';
+        return;
+      }
+      const item = data[Math.floor(Math.random() * data.length)];
+      document.getElementById('result').innerText = `🎉「${item.menu}」\n${item.comment}`;
+    }
+  </script>
+</body>
+</html>
