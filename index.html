@@ -29,18 +29,12 @@
     #gachaIcon:hover {
       transform: scale(1.1);
     }
-    input[type="file"] {
-      margin-top: 1em;
-    }
   </style>
 </head>
 <body>
-  <h1>🎲 コートカフェガチャ</h1>
+  <h1>🎲 コーツトカフェガチャ</h1>
 
-  <!-- CSVファイル読み込み -->
-  <input type="file" id="csvFile" accept=".csv">
-
-  <!-- ガチャアイコン（画像ファイルは同じフォルダに置いてください） -->
+  <!-- ガチャアイコン -->
   <div>
     <img src="./icon_gacha.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
   </div>
@@ -51,24 +45,31 @@
   <script>
     let data = [];
 
-    // CSV読み込み処理
-    document.getElementById('csvFile').addEventListener('change', function(e) {
-      const reader = new FileReader();
-      reader.onload = function() {
-        const lines = reader.result.split('\n').slice(1); // ヘッダー除去
+    // CSVファイルを自動読み込み
+    fetch('./menu.csv')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('CSVファイルの読み込みに失敗しました');
+        }
+        return response.text();
+      })
+      .then(text => {
+        const lines = text.trim().split('\n').slice(1); // ヘッダー除去
         data = lines.map(line => {
           const [menu, comment] = line.trim().split(',');
           return { menu, comment };
         }).filter(item => item.menu && item.comment);
-        console.log(data); // ← Consoleで中身を確認！
-      };
-      reader.readAsText(e.target.files[0]);
-    });
+        console.log('CSV読み込み成功:', data);
+      })
+      .catch(error => {
+        console.error('CSV読み込みエラー:', error);
+        document.getElementById('result').innerText = '⚠️ メニューの読み込みに失敗しました';
+      });
 
     // ガチャを回す処理
     function pickRandom() {
       if (data.length === 0) {
-        document.getElementById('result').innerText = '⚠️ CSVファイルを読み込んでください';
+        document.getElementById('result').innerText = '⚠️ メニューが読み込まれていません';
         return;
       }
       const item = data[Math.floor(Math.random() * data.length)];
