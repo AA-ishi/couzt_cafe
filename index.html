@@ -49,7 +49,9 @@
   <div>
     <img src="./icon_gacha.png" alt="ガチャを回す" id="gachaIcon" onclick="pickRandom()">
   </div>
-
+ 
+  <audio id="doorSound" src="./door.mp3" preload="auto"></audio>
+  
   <!-- 結果表示 -->
   <div id="result"></div>
 
@@ -83,6 +85,12 @@ function pickRandom() {
     document.getElementById('result').innerText = '⚠️ メニューが読み込まれていません';
     return;
   }
+  
+  // ドアベルの音を再生
+  const sound = document.getElementById('doorSound');
+  sound.currentTime = 0; // 毎回最初から再生
+  sound.play();
+
   const item = data[Math.floor(Math.random() * data.length)];
   document.getElementById('result').innerText = `「${item.menu}」\n${item.comment}\n ${item.mood}`;
 } 
